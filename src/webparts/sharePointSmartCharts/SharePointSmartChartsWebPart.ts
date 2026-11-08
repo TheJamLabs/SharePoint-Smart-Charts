@@ -185,6 +185,19 @@ export default class SharePointSmartChartsWebPart
         y2ValueSuffix: p.y2ValueSuffix || '',
         // Annotations
         annotations: p.annotations || '',
+        // SPC (Statistical Process Control)
+        spcEnabled: p.spcEnabled || false,
+        spcMetricKeyField: p.spcMetricKeyField || '',
+        spcMetricLabelField: p.spcMetricLabelField || '',
+        spcPeriodField: p.spcPeriodField || '',
+        spcValueField: p.spcValueField || '',
+        spcIncompleteFlagField: p.spcIncompleteFlagField || '',
+        spcDefaultPreset: p.spcDefaultPreset || '',
+        spcFinancialYearStartMonth: p.spcFinancialYearStartMonth || 4,
+        spcMinObservations: p.spcMinObservations || 6,
+        spcSigmaK: p.spcSigmaK || 3,
+        spcFilterConfigs: p.spcFilterConfigs || '',
+        spcFilterDefaults: p.spcFilterDefaults || '',
         // Dynamic Data consumer
         externalFilterColumn: p.externalFilterColumn || '',
         externalFilterValue: this._getExternalFilterValue(),
@@ -341,6 +354,7 @@ export default class SharePointSmartChartsWebPart
         PropertyPaneTextField('webPartHeader', {
           label: strings.WebPartHeaderFieldLabel,
           placeholder: strings.WebPartHeaderPlaceholder,
+          description: strings.WebPartHeaderFieldHelp,
         }),
       ],
     };
@@ -350,6 +364,7 @@ export default class SharePointSmartChartsWebPart
       groupFields: [
         PropertyPaneTextField('chartTitle', {
           label: strings.ChartTitleFieldLabel,
+          description: strings.ChartTitleFieldHelp,
         }),
         PropertyPaneDropdown('chartType', {
           label: strings.ChartTypeFieldLabel,
@@ -391,10 +406,12 @@ export default class SharePointSmartChartsWebPart
           PropertyPaneTextField('xAxisLabel', {
             label: strings.XAxisLabelFieldLabel,
             placeholder: strings.XAxisPlaceholder,
+            description: strings.XAxisLabelFieldHelp,
           }),
           PropertyPaneTextField('yAxisLabel', {
             label: strings.YAxisLabelFieldLabel,
             placeholder: strings.YAxisPlaceholder,
+            description: strings.YAxisLabelFieldHelp,
           }),
         ] : []),
         ...(currentType === 'histogram' ? [
@@ -441,10 +458,12 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('valuePrefix', {
                   label: strings.ValuePrefixFieldLabel,
                   placeholder: strings.ValuePrefixPlaceholder,
+                  description: strings.ValuePrefixFieldHelp,
                 }),
                 PropertyPaneTextField('valueSuffix', {
                   label: strings.ValueSuffixFieldLabel,
                   placeholder: strings.ValueSuffixPlaceholder,
+                  description: strings.ValueSuffixFieldHelp,
                 }),
                 PropertyPaneSlider('valueDecimals', {
                   label: strings.ValueDecimalsFieldLabel,
@@ -466,11 +485,13 @@ export default class SharePointSmartChartsWebPart
                   PropertyPaneTextField('yAxisMin', {
                     label: strings.YAxisMinFieldLabel,
                     placeholder: strings.AutoPlaceholder,
+                    description: strings.YAxisMinFieldHelp,
                     onGetErrorMessage: (value: string) => this._validateOptionalNumber(value),
                   }),
                   PropertyPaneTextField('yAxisMax', {
                     label: strings.YAxisMaxFieldLabel,
                     placeholder: strings.AutoPlaceholder,
+                    description: strings.YAxisMaxFieldHelp,
                     onGetErrorMessage: (value: string) => this._validateOptionalNumber(value),
                   }),
                 ] : []),
@@ -569,12 +590,14 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('referenceLineValue', {
                   label: strings.ReferenceLineValueFieldLabel,
                   placeholder: strings.AutoPlaceholder,
+                  description: strings.ReferenceLineValueFieldHelp,
                   disabled: this.properties.referenceLineType !== 'fixed',
                   onGetErrorMessage: (value: string) => this._validateOptionalNumber(value),
                 }),
                 PropertyPaneTextField('referenceLineColor', {
                   label: strings.ReferenceLineColorFieldLabel,
                   placeholder: '#666666',
+                  description: strings.ReferenceLineColorFieldHelp,
                   onGetErrorMessage: (value: string) => this._validateOptionalColor(value),
                 }),
               ],
@@ -587,10 +610,12 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('y2Columns', {
                   label: strings.Y2ColumnsFieldLabel,
                   placeholder: strings.Y2ColumnsPlaceholder,
+                  description: strings.Y2ColumnsFieldHelp,
                   value: this.properties.y2Columns || '',
                 }),
                 PropertyPaneTextField('y2AxisLabel', {
                   label: strings.Y2AxisLabelFieldLabel,
+                  description: strings.Y2AxisLabelFieldHelp,
                   value: this.properties.y2AxisLabel || '',
                 }),
                 PropertyPaneToggle('logScaleY2', {
@@ -600,10 +625,12 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('y2ValuePrefix', {
                   label: strings.Y2ValuePrefixFieldLabel,
                   placeholder: strings.ValuePrefixPlaceholder,
+                  description: strings.Y2ValuePrefixFieldHelp,
                 }),
                 PropertyPaneTextField('y2ValueSuffix', {
                   label: strings.Y2ValueSuffixFieldLabel,
                   placeholder: strings.ValueSuffixPlaceholder,
+                  description: strings.Y2ValueSuffixFieldHelp,
                 }),
               ],
             },
@@ -625,6 +652,7 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('errorBarColumn', {
                   label: strings.ErrorBarColumnFieldLabel,
                   value: this.properties.errorBarColumn || '',
+                  description: strings.ErrorBarColumnFieldHelp,
                   disabled: (this.properties.errorBarType || 'none') !== 'custom',
                 }),
               ],
@@ -641,16 +669,19 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('waterfallPositiveColor', {
                   label: strings.WaterfallPositiveColorFieldLabel,
                   placeholder: strings.AutoPlaceholder,
+                  description: strings.WaterfallPositiveColorFieldHelp,
                   onGetErrorMessage: (value: string) => this._validateOptionalColor(value),
                 }),
                 PropertyPaneTextField('waterfallNegativeColor', {
                   label: strings.WaterfallNegativeColorFieldLabel,
                   placeholder: '#d13438',
+                  description: strings.WaterfallNegativeColorFieldHelp,
                   onGetErrorMessage: (value: string) => this._validateOptionalColor(value),
                 }),
                 PropertyPaneTextField('waterfallTotalColor', {
                   label: strings.WaterfallTotalColorFieldLabel,
                   placeholder: '#69797e',
+                  description: strings.WaterfallTotalColorFieldHelp,
                   onGetErrorMessage: (value: string) => this._validateOptionalColor(value),
                 }),
               ],
@@ -681,6 +712,7 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('externalFilterColumn', {
                   label: strings.ExternalFilterColumnFieldLabel,
                   placeholder: strings.ExternalFilterColumnPlaceholder,
+                  description: strings.ExternalFilterColumnFieldHelp,
                 }),
               ],
             },
@@ -699,6 +731,92 @@ export default class SharePointSmartChartsWebPart
               ],
             },
             ] : []),
+            {
+              groupName: strings.SpcGroupName,
+              groupFields: [
+                PropertyPaneToggle('spcEnabled', {
+                  label: strings.SpcEnabledFieldLabel,
+                  checked: this.properties.spcEnabled || false,
+                }),
+                PropertyPaneLabel('spcSourceHdr', { text: strings.SpcSourceSectionLabel }),
+                PropertyPaneTextField('spcMetricKeyField', {
+                  label: strings.SpcMetricKeyFieldLabel,
+                  placeholder: 'metric_code',
+                  description: strings.SpcMetricKeyFieldHelp,
+                }),
+                PropertyPaneTextField('spcMetricLabelField', {
+                  label: strings.SpcMetricLabelFieldLabel,
+                  placeholder: 'metric_name',
+                  description: strings.SpcMetricLabelFieldHelp,
+                }),
+                PropertyPaneTextField('spcPeriodField', {
+                  label: strings.SpcPeriodFieldLabel,
+                  placeholder: 'period_start',
+                  description: strings.SpcPeriodFieldHelp,
+                }),
+                PropertyPaneTextField('spcValueField', {
+                  label: strings.SpcValueFieldLabel,
+                  placeholder: 'value',
+                  description: strings.SpcValueFieldHelp,
+                }),
+                PropertyPaneTextField('spcIncompleteFlagField', {
+                  label: strings.SpcIncompleteFlagFieldLabel,
+                  placeholder: 'is_complete_period',
+                  description: strings.SpcIncompleteFlagHelp,
+                }),
+                PropertyPaneLabel('spcLimitsHdr', { text: strings.SpcLimitsSectionLabel }),
+                PropertyPaneDropdown('spcDefaultPreset', {
+                  label: strings.SpcDefaultPresetFieldLabel,
+                  options: [
+                    { key: 'last6', text: strings.SpcPresetLast6 },
+                    { key: 'last12', text: strings.SpcPresetLast12 },
+                    { key: 'last24', text: strings.SpcPresetLast24 },
+                    { key: 'last36', text: strings.SpcPresetLast36 },
+                    { key: 'financialYear', text: strings.SpcPresetFinancialYear },
+                    { key: 'custom', text: strings.SpcPresetCustom },
+                  ],
+                  selectedKey: this.properties.spcDefaultPreset || 'last12',
+                }),
+                PropertyPaneTextField('spcFinancialYearStartMonth', {
+                  label: strings.SpcFinancialYearStartFieldLabel,
+                  placeholder: '4',
+                  description: strings.SpcFinancialYearStartFieldHelp,
+                  onGetErrorMessage: (value: string) => this._validateOptionalNumber(value),
+                }),
+                PropertyPaneSlider('spcMinObservations', {
+                  label: strings.SpcMinObservationsFieldLabel,
+                  min: 3,
+                  max: 36,
+                  step: 1,
+                  value: this.properties.spcMinObservations || 6,
+                }),
+                PropertyPaneDropdown('spcSigmaK', {
+                  label: strings.SpcSigmaKFieldLabel,
+                  options: [
+                    { key: '2', text: '+/- 2 sigma' },
+                    { key: '3', text: '+/- 3 sigma' },
+                  ],
+                  selectedKey: String(this.properties.spcSigmaK || 3),
+                }),
+                PropertyPaneLabel('spcFiltersHdr', { text: strings.SpcFiltersSectionLabel }),
+                PropertyPaneTextField('spcFilterConfigs', {
+                  label: strings.SpcFilterConfigsFieldLabel,
+                  placeholder: '[{"field":"service_code","allowAll":true}]',
+                  description: strings.SpcFilterConfigsHelp,
+                  multiline: true,
+                  rows: 3,
+                  value: this.properties.spcFilterConfigs || '',
+                }),
+                PropertyPaneTextField('spcFilterDefaults', {
+                  label: strings.SpcFilterDefaultsFieldLabel,
+                  placeholder: '[{"field":"service_code","value":""}]',
+                  description: strings.SpcFilterDefaultsHelp,
+                  multiline: true,
+                  rows: 3,
+                  value: this.properties.spcFilterDefaults || '',
+                }),
+              ],
+            },
             {
               groupName: strings.InteractivityGroupName,
               groupFields: [
@@ -731,6 +849,7 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('thresholdValue', {
                   label: strings.ThresholdValueFieldLabel,
                   placeholder: strings.ThresholdValuePlaceholder,
+                  description: strings.ThresholdValueFieldHelp,
                   onGetErrorMessage: (value: string) => this._validateOptionalNumber(value),
                 }),
                 PropertyPaneDropdown('thresholdDirection', {
@@ -744,6 +863,7 @@ export default class SharePointSmartChartsWebPart
                 PropertyPaneTextField('thresholdColor', {
                   label: strings.ThresholdColorFieldLabel,
                   placeholder: '#d13438',
+                  description: strings.ThresholdColorFieldHelp,
                   onGetErrorMessage: (value: string) => this._validateOptionalColor(value),
                 }),
               ],

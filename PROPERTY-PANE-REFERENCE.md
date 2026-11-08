@@ -2,6 +2,10 @@
 
 Quick reference for which options appear per chart type and where to find them.
 
+> For a value-by-value explanation of every field — including which property-pane
+> step (1 of 3 Settings · 2 of 3 Appearance · 3 of 3 Advanced) each setting lives on —
+> see **[SETTINGS-HELP.md](SETTINGS-HELP.md)**.
+
 ---
 
 ## How the pane is structured
